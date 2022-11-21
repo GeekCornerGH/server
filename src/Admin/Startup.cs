@@ -54,6 +54,9 @@ public class Startup
             case Core.Enums.SupportedDatabaseProviders.Postgres:
                 services.AddSingleton<IDbMigrator, PostgresMigrations.PostgresDbMigrator>();
                 break;
+            case Core.Enums.SupportedDatabaseProviders.Sqlite:
+                services.AddSingleton<IDbMigrator, SqliteMigrations.SqliteDbMigrator>();
+                break;
             default:
                 break;
         }
@@ -95,9 +98,9 @@ public class Startup
         // Jobs service
         Jobs.JobsHostedService.AddJobsServices(services, globalSettings.SelfHosted);
         services.AddHostedService<Jobs.JobsHostedService>();
+        services.AddHostedService<HostedServices.DatabaseMigrationHostedService>();
         if (globalSettings.SelfHosted)
         {
-            services.AddHostedService<HostedServices.DatabaseMigrationHostedService>();
         }
         else
         {
